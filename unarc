@@ -2,6 +2,30 @@
 # COPYRIGHT (c) 2011 Elliott Frisch
 # FREE TO USE. NO WARRANTIES.
 
+function unTarBzip2 {
+	if [ ! -f "$1" ]; then
+		echo "Cannot open file in unTarBzip2 for $1"
+		exit 1
+	fi
+	if [ "$2" == "1" ]; then
+		bzip2 -dc "$1" | tar xvvf -
+	else
+		bzip2 -dc "$1" | tar xf -
+	fi
+}
+function unTarGzip {
+	if [ ! -f "$1" ]; then
+		echo "Cannot open file in unTarGzip for $1"
+		exit 1
+	fi
+	if [ "$2" == "1" ]; then
+		gzip -dc "$1" | tar xvvf -
+	else
+		gzip -dc "$1" | tar xf -
+	fi
+}
+
+VERBOSE="1"
 FILE="$1"
 if [ "$FILE" == "" ]; then
 	echo "$0 filename [missing mandatory file]"
@@ -19,22 +43,22 @@ EXT2=`basename $FILE .$EXT1 2>/dev/null| awk -F . '{print $NF}'`
 # Check for gzip (or bzip2) tar file.
 case "$EXT1" in
 	"tbz2" )
-		bzip2 -dc "$FILE" | tar xvvf -
+		unTarBzip2 "$FILE" "$VERBOSE"
 		exit 0
 		;;
 	"tgz" )
-		gzip -dc "$FILE" | tar xvvf -
+		unTarGzip "$FILE" "$VERBOSE"
 		exit 0
 		;;
 esac
 if [ "$EXT2" == "tar" ]; then
 	case "$EXT1" in
 	"bz2" )
-		bzip2 -dc "$FILE" | tar xvvf -
+		unTarBzip2 "$FILE" "$VERBOSE"
 		exit 0
 		;;
 	"gz" ) 
-		gzip -dc "$FILE" | tar xvvf -
+		unTarGzip "$FILE" "$VERBOSE"
 		exit 0
 		;;
 	esac
@@ -44,11 +68,19 @@ fi
 FILETYPE=`file "$FILE" | cut -f2 -d':' | awk '{print tolower($1)}'`
 case "$FILETYPE" in
 	"7-zip" )
-		7z x "$FILE"
+		if [ "$VERBOSE" == "1" ]; then
+			7z x "$FILE"
+		else
+			7z x "$FILE" > /dev/null
+		fi
 		exit 0
 		;;
 	"zip" )
-		unzip "$FILE"
+		if [ "$VERBOSE" == "1" ]; then
+			unzip -v "$FILE"
+		else
+			unzip "$FILE"
+		fi
 		exit 0
 		;;
 	"bzip2" )
@@ -60,7 +92,11 @@ case "$FILETYPE" in
 		exit 0
 		;;	
 	"rar" )
-		unrar x "$FILE"
+		if [ "$VERBOSE" == "1" ]; then
+			unrar vx "$FILE"
+		else
+			unrar x "$FILE"
+		fi
 		exit 0
 		;;
 	* ) 
