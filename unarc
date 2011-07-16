@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+# COPYRIGHT (c) 2011 Elliott Frisch
+# FREE TO USE
 
 FILE="$1"
 if [ "$FILE" == "" ]; then
