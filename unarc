@@ -3,10 +3,6 @@
 # FREE TO USE. NO WARRANTIES.
 
 function unTarBzip2 {
-	if [ ! -f "$1" ]; then
-		echo "Cannot open file ($1) in unTarBzip2"
-		exit 1
-	fi
 	if [ "$2" == "1" ]; then
 		bzip2 -dc "$1" | tar xvvf -
 	else
@@ -15,14 +11,18 @@ function unTarBzip2 {
 	exit $?
 }
 function unTarGzip {
-	if [ ! -f "$1" ]; then
-		echo "Cannot open file ($1) in unTarGzip"
-		exit 1
-	fi
 	if [ "$2" == "1" ]; then
 		gzip -dc "$1" | tar xvvf -
 	else
 		gzip -dc "$1" | tar xf - > /dev/null 2>&1
+	fi
+	exit $?
+}
+function unTarXz {
+	if [ "$2" == "1" ]; then
+		xz -dc "$1" | tar xvvf -
+	else
+		xz -dc "$1" | tar xf - > /dev/null 2>&1
 	fi
 	exit $?
 }
@@ -52,6 +52,10 @@ case "$EXT1" in
 		unTarGzip "$FILE" "$VERBOSE"
 		exit $?
 		;;
+	"txz" )
+		unTarXz "$FILE" "$VERBOSE"
+		exit $?
+		;;
 esac
 if [ "$EXT2" == "tar" ]; then
 	case "$EXT1" in
@@ -61,6 +65,10 @@ if [ "$EXT2" == "tar" ]; then
 		;;
 	"gz" ) 
 		unTarGzip "$FILE" "$VERBOSE"
+		exit $?
+		;;
+	"xz" )
+		unTarXz "$FILE" "$VERBOSE"
 		exit $?
 		;;
 	esac
