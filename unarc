@@ -14,7 +14,7 @@ fi
 # $FILE exists! Find their extension.
 
 EXT1=`echo $FILE | awk -F . '{print $NF}'`
-EXT2=`basename $FILE .$EXT1 | awk -F . '{print $NF}'`
+EXT2=`basename $FILE .$EXT1 2>/dev/null| awk -F . '{print $NF}'`
 
 # Check for gzip (or bzip2) tar file.
 case "$EXT1" in
@@ -59,6 +59,10 @@ case "$FILETYPE" in
 		gzip -d "$FILE" 
 		exit 0
 		;;	
+	"rar" )
+		unrar x "$FILE"
+		exit 0
+		;;
 	* ) 
 		echo "File of type $FILETYPE is not recognized. $FILE not extracted."
 		exit 1 ;;
