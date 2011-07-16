@@ -1,0 +1,63 @@
+#!/usr/bin/env bash
+
+FILE="$1"
+if [ "$FILE" == "" ]; then
+	echo "$0 filename [missing mandatory file]"
+	exit 1
+fi
+if [ ! -f "$FILE" ]; then
+	echo "$0 filename [$FILE is missing]"
+	exit 1
+fi
+# $FILE exists! Find their extension.
+
+EXT1=`echo $FILE | awk -F . '{print $NF}'`
+EXT2=`basename $FILE .$EXT1 | awk -F . '{print $NF}'`
+
+# Check for gzip (or bzip2) tar file.
+case "$EXT1" in
+	"tbz2" )
+		bzip2 -dc "$FILE" | tar xvvf -
+		exit 0
+		;;
+	"tgz" )
+		gzip -dc "$FILE" | tar xvvf -
+		exit 0
+		;;
+esac
+if [ "$EXT2" == "tar" ]; then
+	case "$EXT1" in
+	"bz2" )
+		bzip2 -dc "$FILE" | tar xvvf -
+		exit 0
+		;;
+	"gz" ) 
+		gzip -dc "$FILE" | tar xvvf -
+		exit 0
+		;;
+	esac
+fi
+
+# Try a file type test.
+FILETYPE=`file "$FILE" | cut -f2 -d':' | awk '{print tolower($1)}'`
+case "$FILETYPE" in
+	"7-zip" )
+		7z x "$FILE"
+		exit 0
+		;;
+	"zip" )
+		unzip "$FILE"
+		exit 0
+		;;
+	"bzip2" )
+		bzip2 -d "$FILE" 
+		exit 0
+		;;
+	"gzip" )
+		gzip -d "$FILE" 
+		exit 0
+		;;	
+	* ) 
+		echo "File of type $FILETYPE is not recognized. $FILE not extracted."
+		exit 1 ;;
+esac
