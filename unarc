@@ -12,6 +12,7 @@ function unTarBzip2 {
 	else
 		bzip2 -dc "$1" | tar xf - > /dev/null 2>&1
 	fi
+	exit $?
 }
 function unTarGzip {
 	if [ ! -f "$1" ]; then
@@ -23,6 +24,7 @@ function unTarGzip {
 	else
 		gzip -dc "$1" | tar xf - > /dev/null 2>&1
 	fi
+	exit $?
 }
 
 VERBOSE="1"
@@ -44,22 +46,22 @@ EXT2=`basename $FILE .$EXT1 2>/dev/null| awk -F . '{print $NF}'`
 case "$EXT1" in
 	"tbz2" )
 		unTarBzip2 "$FILE" "$VERBOSE"
-		exit 0
+		exit $?
 		;;
 	"tgz" )
 		unTarGzip "$FILE" "$VERBOSE"
-		exit 0
+		exit $?
 		;;
 esac
 if [ "$EXT2" == "tar" ]; then
 	case "$EXT1" in
 	"bz2" )
 		unTarBzip2 "$FILE" "$VERBOSE"
-		exit 0
+		exit $?
 		;;
 	"gz" ) 
 		unTarGzip "$FILE" "$VERBOSE"
-		exit 0
+		exit $?
 		;;
 	esac
 fi
@@ -73,7 +75,15 @@ case "$FILETYPE" in
 		else
 			xz -d "$FILE" > /dev/null 2>&1
 		fi
-		exit 0
+		exit $?
+		;;
+	"lha" )
+		if [ "$VERBOSE" == "1" ]; then
+			lha xv "$FILE"
+		else
+			lha xq "$FILE" > /dev/null 2>&1
+		fi
+		exit $?
 		;;
 	"7-zip" )
 		if [ "$VERBOSE" == "1" ]; then
@@ -81,7 +91,7 @@ case "$FILETYPE" in
 		else
 			7z x "$FILE" > /dev/null 2>&1
 		fi
-		exit 0
+		exit $?
 		;;
 	"zip" )
 		if [ "$VERBOSE" == "1" ]; then
@@ -89,7 +99,7 @@ case "$FILETYPE" in
 		else
 			unzip "$FILE" > /dev/null 2>&1
 		fi
-		exit 0
+		exit $?
 		;;
 	"bzip2" )
 		if [ "$VERBOSE" == "1" ]; then
@@ -97,7 +107,7 @@ case "$FILETYPE" in
 		else
 			bzip2 -d "$FILE" > /dev/null 2>&1
 		fi
-		exit 0
+		exit $?
 		;;
 	"gzip" )
 		if [ "$VERBOSE" == "1" ]; then
@@ -105,7 +115,7 @@ case "$FILETYPE" in
 		else
 			gzip -d "$FILE" > /dev/null 2>&1
 		fi
-		exit 0
+		exit $?
 		;;	
 	"rar" )
 		if [ "$VERBOSE" == "1" ]; then
@@ -113,7 +123,7 @@ case "$FILETYPE" in
 		else
 			unrar x "$FILE" > /dev/null 2>&1
 		fi
-		exit 0
+		exit $?
 		;;
 	* ) 
 		echo "File of type $FILETYPE is not recognized. $FILE not extracted."
