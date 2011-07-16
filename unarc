@@ -4,24 +4,24 @@
 
 function unTarBzip2 {
 	if [ ! -f "$1" ]; then
-		echo "Cannot open file in unTarBzip2 for $1"
+		echo "Cannot open file ($1) in unTarBzip2"
 		exit 1
 	fi
 	if [ "$2" == "1" ]; then
 		bzip2 -dc "$1" | tar xvvf -
 	else
-		bzip2 -dc "$1" | tar xf -
+		bzip2 -dc "$1" | tar xf - > /dev/null 2>&1
 	fi
 }
 function unTarGzip {
 	if [ ! -f "$1" ]; then
-		echo "Cannot open file in unTarGzip for $1"
+		echo "Cannot open file ($1) in unTarGzip"
 		exit 1
 	fi
 	if [ "$2" == "1" ]; then
 		gzip -dc "$1" | tar xvvf -
 	else
-		gzip -dc "$1" | tar xf -
+		gzip -dc "$1" | tar xf - > /dev/null 2>&1
 	fi
 }
 
@@ -35,7 +35,7 @@ if [ ! -f "$FILE" ]; then
 	echo "$0 filename [$FILE is missing]"
 	exit 1
 fi
-# $FILE exists! Find their extension.
+# $FILE exists! Find its' extension.
 
 EXT1=`echo $FILE | awk -F . '{print $NF}'`
 EXT2=`basename $FILE .$EXT1 2>/dev/null| awk -F . '{print $NF}'`
@@ -71,7 +71,7 @@ case "$FILETYPE" in
 		if [ "$VERBOSE" == "1" ]; then
 			7z x "$FILE"
 		else
-			7z x "$FILE" > /dev/null
+			7z x "$FILE" > /dev/null 2>&1
 		fi
 		exit 0
 		;;
@@ -79,23 +79,31 @@ case "$FILETYPE" in
 		if [ "$VERBOSE" == "1" ]; then
 			unzip -v "$FILE"
 		else
-			unzip "$FILE"
+			unzip "$FILE" > /dev/null 2>&1
 		fi
 		exit 0
 		;;
 	"bzip2" )
-		bzip2 -d "$FILE" 
+		if [ "$VERBOSE" == "1" ]; then
+			bzip2 -d "$FILE" 
+		else
+			bzip2 -d "$FILE" > /dev/null 2>&1
+		fi
 		exit 0
 		;;
 	"gzip" )
-		gzip -d "$FILE" 
+		if [ "$VERBOSE" == "1" ]; then
+			gzip -d "$FILE" 
+		else
+			gzip -d "$FILE" > /dev/null 2>&1
+		fi
 		exit 0
 		;;	
 	"rar" )
 		if [ "$VERBOSE" == "1" ]; then
 			unrar vx "$FILE"
 		else
-			unrar x "$FILE"
+			unrar x "$FILE" > /dev/null 2>&1
 		fi
 		exit 0
 		;;

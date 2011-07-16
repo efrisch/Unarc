@@ -1,7 +1,7 @@
 Feel free to use or modify.
 
 This script will extract an archive of the following types into the current
-directory: tar.bz2 (and tbz2), tar.gz (and tgz), 7-zip, zip (and jar), bzip2
-and rar.
+directory: tar.bz2 (and tbz2), tar.gz (and tgz), 7-zip, zip (and jar), 
+bzip2 (and gzip) and rar.
 
 It depends on gzip, bzip2, unrar, unzip, 7z and tar being available to do this.
