@@ -67,6 +67,14 @@ fi
 # Try a file type test.
 FILETYPE=`file "$FILE" | cut -f2 -d':' | awk '{print tolower($1)}'`
 case "$FILETYPE" in
+	"xz" )
+		if [ "$VERBOSE" == "1" ]; then
+			xz -d "$FILE"
+		else
+			xz -d "$FILE" > /dev/null 2>&1
+		fi
+		exit 0
+		;;
 	"7-zip" )
 		if [ "$VERBOSE" == "1" ]; then
 			7z x "$FILE"
