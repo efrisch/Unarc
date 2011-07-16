@@ -56,6 +56,15 @@ case "$EXT1" in
 		unTarXz "$FILE" "$VERBOSE"
 		exit $?
 		;;
+	"deb" )
+		if [ "$VERBOSE" == "1" ]; then
+			dpkg -c "$FILE"
+			dpkg -x "$FILE" .
+		else
+			dpkg -x "$FILE" . > /dev/null 2>&1
+		fi
+		exit $?
+		;;
 esac
 if [ "$EXT2" == "tar" ]; then
 	case "$EXT1" in
