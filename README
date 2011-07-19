@@ -2,7 +2,7 @@ Feel free to use or modify.
 
 This script will extract an archive in one the following types into the current
 directory: cpio, tar.xz (and txz), tar.bz2 (and tbz2), tar.gz (and tgz), 7-zip, 
-zip (and jar), deb, bzip2 (and gzip), lha, xz and rar.
+zip (and jar), deb, rpm, bzip2 (and gzip), lha, xz and rar.
 
 It requires dpkg, awk, basename, file, gzip, bzip2, unrar, unzip, 7z, lha, 
-xz and tar being available to really shine and to various degrees.
+xz, rpm2cpio and tar being available to really shine and to various degrees.

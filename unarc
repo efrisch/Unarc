@@ -65,6 +65,14 @@ case "$EXT1" in
 		fi
 		exit $?
 		;;
+	"rpm" )
+		if [ "$VERBOSE" == "1" ]; then
+			rpm2cpio "$FILE" | cpio -idmv
+		else
+			rpm2cpio "$FILE" | cpio -idm > /dev/null 2>&1
+		fi
+		exit $?
+		;;
 esac
 if [ "$EXT2" == "tar" ]; then
 	case "$EXT1" in
